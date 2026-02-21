@@ -1,0 +1,2114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico de Leitura — Leitura Estratégica para Concursos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   DESIGN SYSTEM — Luxury Editorial + Data Dashboard
+   ═══════════════════════════════════════════════════════════ */
+:root {
+  /* Core palette */
+  --bg-deep: #0B0F1A;
+  --bg-surface: #111827;
+  --bg-card: #1A2236;
+  --bg-card-hover: #1F2942;
+  --bg-elevated: #243052;
+  --bg-input: #0D1220;
+
+  /* Accent */
+  --accent: #3B82F6;
+  --accent-glow: rgba(59,130,246,0.15);
+  --accent-bright: #60A5FA;
+  --accent-dim: #1E40AF;
+
+  /* Gold for metrics */
+  --gold: #F59E0B;
+  --gold-glow: rgba(245,158,11,0.12);
+  --gold-dim: #B45309;
+
+  /* Success / Error */
+  --green: #10B981;
+  --green-glow: rgba(16,185,129,0.12);
+  --green-bg: rgba(16,185,129,0.08);
+  --red: #EF4444;
+  --red-glow: rgba(239,68,68,0.12);
+  --red-bg: rgba(239,68,68,0.08);
+
+  /* Text */
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --text-dim: #475569;
+
+  /* Borders */
+  --border: rgba(255,255,255,0.06);
+  --border-hover: rgba(255,255,255,0.12);
+  --border-accent: rgba(59,130,246,0.3);
+
+  /* Typography */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Effects */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.3);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.4);
+  --shadow-glow: 0 0 30px rgba(59,130,246,0.1);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  background: var(--bg-deep);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Noise texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Ambient glow */
+.ambient-glow {
+  position: fixed;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+.glow-1 {
+  top: -200px;
+  right: -100px;
+  background: radial-gradient(circle, rgba(59,130,246,0.12), transparent 70%);
+}
+
+.glow-2 {
+  bottom: -300px;
+  left: -200px;
+  background: radial-gradient(circle, rgba(245,158,11,0.06), transparent 70%);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HEADER
+   ═══════════════════════════════════════════════════════════ */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(11,15,26,0.82);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border-bottom: 1px solid var(--border);
+}
+
+.header-inner {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0.9rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.brand-mark {
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  box-shadow: 0 2px 12px rgba(59,130,246,0.25);
+}
+
+.brand-text h1 {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.brand-text span {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--bg-surface);
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.nav-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 0.5rem 1.1rem;
+  border-radius: 9px;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s var(--ease);
+  letter-spacing: 0.01em;
+}
+
+.nav-btn:hover { color: var(--text-secondary); }
+
+.nav-btn.active {
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 2px 8px rgba(59,130,246,0.35);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LAYOUT & SCREENS
+   ═══════════════════════════════════════════════════════════ */
+.container {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.screen { display: none; }
+.screen.active { display: block; animation: screenIn 0.5s var(--ease); }
+
+@keyframes screenIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HOME — HERO
+   ═══════════════════════════════════════════════════════════ */
+.hero {
+  text-align: center;
+  padding: 4rem 0 3rem;
+  position: relative;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-bright);
+  margin-bottom: 1.5rem;
+  animation: fadeUp 0.6s var(--ease) 0.1s both;
+}
+
+.eyebrow-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--accent);
+}
+
+.hero h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  margin-bottom: 1.25rem;
+  animation: fadeUp 0.6s var(--ease) 0.2s both;
+}
+
+.hero h2 em {
+  font-style: italic;
+  background: linear-gradient(135deg, var(--accent-bright), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-desc {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  max-width: 560px;
+  margin: 0 auto;
+  line-height: 1.7;
+  animation: fadeUp 0.6s var(--ease) 0.3s both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Feature strips */
+.features-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin: 3rem 0;
+  animation: fadeUp 0.6s var(--ease) 0.4s both;
+}
+
+.feature-cell {
+  background: var(--bg-surface);
+  padding: 1.75rem 1.25rem;
+  text-align: center;
+  transition: background 0.3s var(--ease);
+}
+
+.feature-cell:hover { background: var(--bg-card); }
+
+.feature-num {
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--accent-bright);
+  margin-bottom: 0.6rem;
+}
+
+.feature-cell h3 {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.3rem;
+}
+
+.feature-cell p {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* AI Badge */
+.ai-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(245,158,11,0.08));
+  border: 1px solid rgba(59,130,246,0.2);
+  padding: 0.65rem 1.2rem;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent-bright);
+  margin: 2rem auto 0;
+  animation: fadeUp 0.6s var(--ease) 0.5s both;
+}
+
+.ai-pulse {
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: pulse 2s ease infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(59,130,246,0.5); }
+  50% { opacity: 0.8; box-shadow: 0 0 0 8px rgba(59,130,246,0); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   WEEK CARDS
+   ═══════════════════════════════════════════════════════════ */
+.weeks-section {
+  margin-top: 1rem;
+}
+
+.section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.section-meta {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.week-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.75rem;
+  cursor: pointer;
+  transition: all 0.35s var(--ease);
+  position: relative;
+  overflow: hidden;
+}
+
+.week-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  opacity: 0;
+  transition: opacity 0.35s var(--ease);
+  background: linear-gradient(135deg, rgba(59,130,246,0.05), transparent);
+}
+
+.week-card:hover {
+  border-color: var(--border-accent);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-glow), var(--shadow-md);
+}
+
+.week-card:hover::after { opacity: 1; }
+
+.week-card.completed {
+  border-color: rgba(16,185,129,0.25);
+}
+
+.week-card.completed::after {
+  background: linear-gradient(135deg, rgba(16,185,129,0.04), transparent);
+  opacity: 1;
+}
+
+.week-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.week-number {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-bright);
+  padding: 0.3rem 0.7rem;
+  background: var(--accent-glow);
+  border-radius: 6px;
+}
+
+.week-card.completed .week-number {
+  color: var(--green);
+  background: var(--green-glow);
+}
+
+.week-status {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.week-card.completed .week-status { color: var(--green); }
+
+.week-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+  position: relative;
+  z-index: 1;
+}
+
+.week-topic {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.25rem;
+  position: relative;
+  z-index: 1;
+}
+
+.week-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+}
+
+.week-words {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.week-cta {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent-bright);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: gap 0.3s var(--ease);
+}
+
+.week-card:hover .week-cta { gap: 0.6rem; }
+
+.week-card.completed .week-cta { color: var(--green); }
+
+.week-result-mini {
+  display: flex;
+  gap: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  position: relative;
+  z-index: 1;
+}
+
+.week-result-mini strong {
+  color: var(--text-primary);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   READING SCREEN
+   ═══════════════════════════════════════════════════════════ */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  transition: color 0.25s var(--ease);
+}
+
+.back-btn:hover { color: var(--text-primary); }
+
+.reading-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.reading-info {
+  text-align: right;
+}
+
+.reading-info .ri-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-bright);
+}
+
+.reading-info .ri-subject {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Pre-read */
+.pre-read {
+  max-width: 580px;
+  margin: 4rem auto;
+  text-align: center;
+}
+
+.pre-read-icon {
+  width: 72px;
+  height: 72px;
+  background: var(--accent-glow);
+  border: 1px solid rgba(59,130,246,0.15);
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.pre-read h2 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.pre-read > p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+  line-height: 1.7;
+}
+
+.pre-checklist {
+  text-align: left;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.pre-checklist li {
+  list-style: none;
+  padding: 0.45rem 0;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  line-height: 1.5;
+}
+
+.check-icon {
+  color: var(--accent-bright);
+  flex-shrink: 0;
+  margin-top: 2px;
+  font-weight: 700;
+}
+
+/* Timer bar */
+.timer-bar {
+  position: sticky;
+  top: 56px;
+  z-index: 50;
+  background: rgba(17,24,39,0.9);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-md);
+}
+
+.timer-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.timer-clock {
+  font-family: var(--font-mono);
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.05em;
+}
+
+.timer-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* Reading text */
+.reading-area {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.reading-text {
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  line-height: 1.95;
+  color: var(--text-secondary);
+}
+
+.reading-text p {
+  margin-bottom: 1.4rem;
+  text-align: justify;
+  hyphens: auto;
+}
+
+.reading-text h3 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 2rem 0 1rem;
+  text-align: left;
+}
+
+.finish-area {
+  text-align: center;
+  padding-top: 2.5rem;
+  margin-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RECALL SCREEN (AI-powered)
+   ═══════════════════════════════════════════════════════════ */
+.recall-section {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.recall-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.ppm-display {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.ppm-num {
+  font-family: var(--font-mono);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--accent-bright);
+  line-height: 1;
+}
+
+.ppm-meta {
+  text-align: left;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.recall-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.recall-header p {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+}
+
+/* Phase tabs */
+.phase-tabs {
+  display: flex;
+  gap: 1px;
+  background: var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.phase-tab {
+  flex: 1;
+  padding: 0.85rem;
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  transition: all 0.3s var(--ease);
+}
+
+.phase-tab.active {
+  background: var(--bg-card);
+  color: var(--accent-bright);
+}
+
+.phase-tab.done {
+  color: var(--green);
+}
+
+.phase-tab .phase-num {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  display: block;
+  margin-bottom: 0.2rem;
+  letter-spacing: 0.06em;
+}
+
+/* Recall textarea */
+.recall-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.recall-box label {
+  display: block;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.recall-box .hint {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.recall-textarea {
+  width: 100%;
+  min-height: 200px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1.25rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  line-height: 1.7;
+  resize: vertical;
+  transition: border-color 0.3s var(--ease);
+  outline: none;
+}
+
+.recall-textarea:focus { border-color: var(--accent); }
+
+.recall-textarea::placeholder { color: var(--text-dim); }
+
+.char-count {
+  text-align: right;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+}
+
+/* AI Analysis result */
+.ai-analysis {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.ai-analysis-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, rgba(59,130,246,0.08), rgba(245,158,11,0.04));
+  border-bottom: 1px solid var(--border);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent-bright);
+}
+
+.ai-analysis-body {
+  padding: 1.5rem;
+}
+
+.ai-score-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.ai-score-item {
+  text-align: center;
+  padding: 1rem;
+  background: var(--bg-surface);
+  border-radius: var(--radius-sm);
+}
+
+.ai-score-value {
+  font-family: var(--font-mono);
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.ai-score-value.high { color: var(--green); }
+.ai-score-value.mid { color: var(--gold); }
+.ai-score-value.low { color: var(--red); }
+
+.ai-score-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+.ai-feedback {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
+
+.ai-feedback strong { color: var(--text-primary); }
+
+/* Loading AI */
+.ai-loading {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.ai-loading-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 1rem;
+}
+
+.ai-loading-dots span {
+  width: 10px;
+  height: 10px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: dotBounce 1.2s ease infinite;
+}
+
+.ai-loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.ai-loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes dotBounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+.ai-loading p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   QUIZ (Multiple Choice)
+   ═══════════════════════════════════════════════════════════ */
+.quiz-container { max-width: 700px; margin: 0 auto; }
+
+.question-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.75rem;
+  margin-bottom: 1rem;
+}
+
+.q-number {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-bright);
+  margin-bottom: 0.6rem;
+}
+
+.q-text {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 1.25rem;
+  line-height: 1.6;
+}
+
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.opt-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.25s var(--ease);
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.opt-label:hover { border-color: var(--border-hover); background: rgba(255,255,255,0.02); }
+
+.opt-label input { display: none; }
+
+.opt-dot {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--text-dim);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: all 0.25s var(--ease);
+  position: relative;
+}
+
+.opt-label.selected { border-color: var(--accent); background: var(--accent-glow); color: var(--text-primary); }
+.opt-label.selected .opt-dot { border-color: var(--accent); background: var(--accent); }
+.opt-label.selected .opt-dot::after {
+  content: '';
+  width: 6px; height: 6px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.opt-label.correct { border-color: var(--green); background: var(--green-bg); color: var(--text-primary); }
+.opt-label.correct .opt-dot { border-color: var(--green); background: var(--green); }
+
+.opt-label.wrong { border-color: var(--red); background: var(--red-bg); color: var(--text-primary); }
+.opt-label.wrong .opt-dot { border-color: var(--red); background: var(--red); }
+
+/* ═══════════════════════════════════════════════════════════
+   RESULTS SCREEN
+   ═══════════════════════════════════════════════════════════ */
+.results-container {
+  max-width: 680px;
+  margin: 2rem auto;
+}
+
+.results-hero {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.results-hero h2 {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.results-hero p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.result-metric {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.result-metric-value {
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.result-metric-value.blue { color: var(--accent-bright); }
+.result-metric-value.gold { color: var(--gold); }
+.result-metric-value.green { color: var(--green); }
+
+.result-metric-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.3rem;
+  font-weight: 500;
+}
+
+.result-detail-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.75rem;
+  margin-bottom: 1rem;
+}
+
+.result-detail-card h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.result-detail-card p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 0.4rem;
+}
+
+.comparison-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+
+.comparison-row:last-child { border-bottom: none; }
+.comparison-row .label { color: var(--text-muted); }
+.comparison-row .value { font-weight: 600; color: var(--text-primary); font-family: var(--font-mono); }
+.comparison-row .positive { color: var(--green); }
+.comparison-row .negative { color: var(--red); }
+
+.results-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PROGRESS DASHBOARD
+   ═══════════════════════════════════════════════════════════ */
+.dash-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.dash-stat {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.dash-stat-val {
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.dash-stat-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+.chart-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.chart-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.chart-area {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 200px;
+  padding-bottom: 36px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.chart-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  max-width: 100px;
+}
+
+.chart-bars-pair {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 160px;
+}
+
+.chart-bar {
+  width: 30px;
+  border-radius: 6px 6px 0 0;
+  transition: height 1s var(--ease);
+  position: relative;
+  min-height: 4px;
+}
+
+.chart-bar.ppm { background: linear-gradient(to top, var(--accent-dim), var(--accent-bright)); }
+.chart-bar.ret { background: linear-gradient(to top, var(--gold-dim), var(--gold)); }
+.chart-bar.empty { background: var(--bg-elevated); height: 4px !important; }
+
+.chart-bar-val {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--text-secondary);
+}
+
+.chart-week-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.chart-legend {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 1.25rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+}
+
+.legend-swatch.ppm { background: var(--accent); }
+.legend-swatch.ret { background: var(--gold); }
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-muted);
+}
+
+.empty-state p { margin-bottom: 0.5rem; }
+
+/* ═══════════════════════════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════════════════════════ */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.75rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+  box-shadow: 0 2px 8px rgba(59,130,246,0.3);
+}
+
+.btn-primary:hover {
+  background: var(--accent-bright);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(59,130,246,0.4);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s var(--ease);
+}
+
+.btn-secondary:hover { border-color: var(--border-hover); color: var(--text-primary); }
+
+.btn-danger {
+  background: var(--red);
+  color: white;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.25s;
+}
+
+.btn-danger:hover { opacity: 0.85; }
+
+.btn-small {
+  padding: 0.55rem 1.1rem;
+  font-size: 0.8rem;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MODAL
+   ═══════════════════════════════════════════════════════════ */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-overlay.active { display: flex; }
+
+.modal-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+}
+
+.modal-box h3 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.modal-box p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.modal-actions { display: flex; gap: 0.75rem; justify-content: center; }
+
+/* ═══════════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════════ */
+.site-footer {
+  text-align: center;
+  padding: 2.5rem 2rem;
+  border-top: 1px solid var(--border);
+  margin-top: 3rem;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+.site-footer p + p { margin-top: 0.3rem; }
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .container { padding: 1.5rem 1rem; }
+  .features-strip { grid-template-columns: repeat(2, 1fr); }
+  .week-grid { grid-template-columns: 1fr; }
+  .results-grid { grid-template-columns: 1fr; }
+  .dash-stats { grid-template-columns: repeat(2, 1fr); }
+  .ai-score-row { grid-template-columns: 1fr; }
+  .timer-bar { position: relative; top: 0; flex-direction: column; gap: 0.75rem; }
+  .header-nav { display: none; }
+  .hero h2 { font-size: 1.8rem; }
+  .chart-bar { width: 22px; }
+}
+
+@media (max-width: 480px) {
+  .features-strip { grid-template-columns: 1fr; }
+  .phase-tabs { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="ambient-glow glow-1"></div>
+<div class="ambient-glow glow-2"></div>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <div class="brand-mark">⏱</div>
+      <div class="brand-text">
+        <h1>Diagnóstico de Leitura</h1>
+        <span>Leitura Estratégica para Concursos</span>
+      </div>
+    </div>
+    <nav class="header-nav" id="main-nav">
+      <button class="nav-btn active" data-screen="home" onclick="go('home')">Início</button>
+      <button class="nav-btn" data-screen="progress" onclick="go('progress')">Progresso</button>
+    </nav>
+  </div>
+</header>
+
+<!-- ═══════ HOME ═══════ -->
+<div id="screen-home" class="screen active">
+  <div class="container">
+    <div class="hero">
+      <div class="hero-eyebrow"><span class="eyebrow-dot"></span> Ferramenta do Ebook</div>
+      <h2>Meça sua evolução<br>com <em>precisão</em></h2>
+      <p class="hero-desc">Quatro testes padronizados com avaliação por inteligência artificial. Velocidade, compreensão e retenção — semana a semana.</p>
+    </div>
+
+    <div class="features-strip">
+      <div class="feature-cell">
+        <div class="feature-num">01</div>
+        <h3>Leia o texto</h3>
+        <p>Cronômetro automático mede seu tempo</p>
+      </div>
+      <div class="feature-cell">
+        <div class="feature-num">02</div>
+        <h3>Evocação livre</h3>
+        <p>Escreva tudo que lembra do texto</p>
+      </div>
+      <div class="feature-cell">
+        <div class="feature-num">03</div>
+        <h3>Análise com IA</h3>
+        <p>A IA avalia a qualidade da sua retenção</p>
+      </div>
+      <div class="feature-cell">
+        <div class="feature-num">04</div>
+        <h3>Quiz objetivo</h3>
+        <p>5 questões de múltipla escolha</p>
+      </div>
+    </div>
+
+    <div class="ai-badge">
+      <span class="ai-pulse"></span>
+      Avaliação com IA — Evocação livre analisada por Gemini
+    </div>
+
+    <div class="weeks-section" style="margin-top:3rem;">
+      <div class="section-header">
+        <h2 class="section-title">Testes Semanais</h2>
+        <span class="section-meta" id="progress-summary"></span>
+      </div>
+      <div class="week-grid" id="week-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ PROGRESS ═══════ -->
+<div id="screen-progress" class="screen">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Seu Progresso</h2>
+    </div>
+    <div id="dash-content"></div>
+  </div>
+</div>
+
+<!-- ═══════ READING ═══════ -->
+<div id="screen-reading" class="screen">
+  <div class="container">
+    <div class="reading-topbar">
+      <button class="back-btn" onclick="go('home')">← Voltar</button>
+      <div class="reading-info">
+        <div class="ri-label" id="r-label"></div>
+        <div class="ri-subject" id="r-subject"></div>
+      </div>
+    </div>
+
+    <div id="pre-read-panel" class="pre-read">
+      <div class="pre-read-icon">📖</div>
+      <h2>Pronto para começar?</h2>
+      <p>O cronômetro iniciará quando você clicar no botão. Leia no seu ritmo normal de estudo — para compreender, não para impressionar.</p>
+      <ul class="pre-checklist">
+        <li><span class="check-icon">→</span> Leia para compreender, não para velocidade</li>
+        <li><span class="check-icon">→</span> Evite voltar para reler trechos</li>
+        <li><span class="check-icon">→</span> Ao terminar, você escreverá o que lembra (avaliação IA)</li>
+        <li><span class="check-icon">→</span> Depois, responderá 5 perguntas objetivas</li>
+      </ul>
+      <button class="btn-primary" onclick="startReading()">Iniciar Leitura</button>
+    </div>
+
+    <div id="reading-content" style="display:none;">
+      <div class="timer-bar">
+        <div class="timer-left">
+          <div class="timer-clock" id="timer-display">00:00</div>
+          <div class="timer-label">Tempo de leitura</div>
+        </div>
+        <button class="btn-primary btn-small" onclick="finishReading()">Terminei a leitura</button>
+      </div>
+      <div class="reading-area">
+        <div class="reading-text" id="reading-text"></div>
+        <div class="finish-area">
+          <button class="btn-primary" onclick="finishReading()">Terminei a leitura</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ RECALL + QUIZ ═══════ -->
+<div id="screen-assessment" class="screen">
+  <div class="container">
+    <div class="recall-section">
+      <div class="recall-header">
+        <div class="ppm-display">
+          <div class="ppm-num" id="assess-ppm">0</div>
+          <div class="ppm-meta">palavras<br>por minuto</div>
+        </div>
+        <h2>Avaliação de Compreensão</h2>
+        <p>Duas etapas: evocação livre (analisada por IA) + quiz objetivo.</p>
+      </div>
+
+      <div class="phase-tabs">
+        <div class="phase-tab active" id="tab-recall">
+          <span class="phase-num">Etapa 1</span>
+          Evocação Livre
+        </div>
+        <div class="phase-tab" id="tab-quiz">
+          <span class="phase-num">Etapa 2</span>
+          Quiz Objetivo
+        </div>
+      </div>
+
+      <!-- Phase 1: Recall -->
+      <div id="phase-recall">
+        <div class="recall-box">
+          <label>Escreva tudo que você lembra do texto</label>
+          <div class="hint">Conceitos, definições, classificações, exemplos, detalhes — tudo que vier à memória. Não se preocupe com organização. A IA avaliará a completude e precisão do que você reteve.</div>
+          <textarea class="recall-textarea" id="recall-text" placeholder="Comece a escrever o que você lembra do texto..." oninput="updateCharCount()"></textarea>
+          <div class="char-count" id="char-count">0 caracteres</div>
+        </div>
+        <div style="text-align:center;">
+          <button class="btn-primary" onclick="submitRecall()" id="btn-submit-recall">Enviar para análise com IA</button>
+        </div>
+
+        <div id="ai-result" style="display:none;"></div>
+      </div>
+
+      <!-- Phase 2: Quiz -->
+      <div id="phase-quiz" style="display:none;">
+        <div class="quiz-container" id="quiz-container"></div>
+        <div style="text-align:center;margin-top:1.5rem;" id="quiz-actions">
+          <button class="btn-primary" onclick="submitQuiz()">Verificar Respostas</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ RESULTS ═══════ -->
+<div id="screen-results" class="screen">
+  <div class="container">
+    <div class="results-container" id="results-content"></div>
+  </div>
+</div>
+
+<!-- ═══════ MODAL ═══════ -->
+<div class="modal-overlay" id="reset-modal">
+  <div class="modal-box">
+    <h3>Apagar todos os resultados?</h3>
+    <p>Essa ação é permanente. Todos os resultados serão removidos.</p>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn-danger" onclick="resetAll()">Apagar tudo</button>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <p>Ferramenta complementar do ebook <strong style="color:var(--text-secondary)">Leitura Estratégica para Concursos</strong></p>
+  <p>Textos originais para avaliação de leitura. Legislação citada é de domínio público. Análise por IA via Gemini (Google).</p>
+</footer>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════════════
+const WEEKS = [
+  {
+    week: 1, label: "Semana 1 — Baseline", subject: "Direito Constitucional",
+    topic: "Controle de Constitucionalidade", wordCount: 1026,
+    text: `<h3>O Sistema Brasileiro de Controle de Constitucionalidade</h3>
+<p>O ordenamento jurídico brasileiro adota um sistema misto de controle de constitucionalidade, combinando elementos do modelo norte-americano (difuso) e do modelo europeu (concentrado). Essa configuração permite que a verificação da compatibilidade das leis com a Constituição seja realizada tanto por qualquer juiz ou tribunal no exame de casos concretos quanto pelo Supremo Tribunal Federal de forma abstrata e com efeitos gerais.</p>
+<p>O controle difuso, também chamado de controle concreto ou incidental, tem origem no precedente norte-americano Marbury v. Madison, de 1803, e foi incorporado ao direito brasileiro desde a Constituição de 1891. Nessa modalidade, qualquer juiz ou tribunal pode, no julgamento de um caso concreto, declarar a inconstitucionalidade de uma lei ou ato normativo que seja relevante para a solução da lide. A declaração de inconstitucionalidade não é o objeto principal da ação, mas uma questão prejudicial — ou seja, o tribunal precisa resolvê-la antes de decidir o mérito.</p>
+<p>Um aspecto fundamental do controle difuso é que, em regra, a decisão produz efeitos apenas entre as partes do processo (efeito inter partes). Se um juiz federal em São Paulo declara incidentalmente a inconstitucionalidade de determinado dispositivo legal, essa decisão vincula apenas o autor e o réu daquela ação específica. A lei declarada inconstitucional continua vigente e aplicável em todos os demais casos, até que o Supremo Tribunal Federal eventualmente se pronuncie com efeitos gerais.</p>
+<p>No entanto, a Constituição de 1988 previu um mecanismo para ampliar os efeitos do controle difuso: a resolução do Senado Federal. Quando o STF declara a inconstitucionalidade de uma lei no controle difuso, pode comunicar a decisão ao Senado, que tem a faculdade — não a obrigação — de editar resolução suspendendo a execução da lei no todo ou em parte. Essa suspensão produz efeitos erga omnes (para todos) e ex nunc (dali em diante, sem retroagir).</p>
+<p>Importante observar que há debate doutrinário significativo sobre a chamada "mutação constitucional do artigo 52, X". Parte da doutrina e alguns ministros do STF sustentam que o papel do Senado teria se tornado meramente formal, cabendo dar publicidade à decisão do Supremo que, por si só, já teria efeitos gerais. Essa posição, contudo, não é unânime e permanece como tema controverso.</p>
+<p>O controle concentrado, por sua vez, é exercido exclusivamente pelo STF e tem como objeto principal a própria questão constitucional. As ações do controle concentrado foram significativamente ampliadas pela Constituição de 1988. As principais são: a Ação Direta de Inconstitucionalidade (ADI), a Ação Declaratória de Constitucionalidade (ADC), a Arguição de Descumprimento de Preceito Fundamental (ADPF) e a Ação Direta de Inconstitucionalidade por Omissão (ADO).</p>
+<p>A ADI, disciplinada pelo artigo 102, I, "a", da Constituição e pela Lei 9.868/1999, permite que determinados legitimados questionem diretamente perante o STF a constitucionalidade de lei ou ato normativo federal ou estadual. O rol de legitimados é taxativo e consta do artigo 103 da Constituição, incluindo, entre outros, o Presidente da República, a Mesa do Senado Federal, o Procurador-Geral da República, o Conselho Federal da Ordem dos Advogados do Brasil e partidos políticos com representação no Congresso Nacional.</p>
+<p>A decisão proferida em ADI possui efeitos erga omnes (aplica-se a todos) e vinculante em relação aos demais órgãos do Poder Judiciário e à administração pública direta e indireta, nas esferas federal, estadual e municipal. Quanto aos efeitos temporais, a regra é que a declaração de inconstitucionalidade opera com efeitos retroativos (ex tunc), significando que a lei é considerada nula desde sua origem. Todavia, o artigo 27 da Lei 9.868/1999 permite que o STF, por maioria de dois terços de seus membros, restrinja os efeitos da declaração ou determine que ela só produza efeitos a partir de determinado momento (modulação temporal dos efeitos), tendo em vista razões de segurança jurídica ou de excepcional interesse social.</p>
+<p>A ADC segue lógica inversa: busca-se a confirmação da constitucionalidade de uma lei federal. Foi introduzida pela Emenda Constitucional 3/1993 e tem os mesmos legitimados da ADI. Seu efeito prático é eliminar a insegurança jurídica quando diversos juízes e tribunais estão decidindo de formas divergentes sobre a constitucionalidade de determinada norma.</p>
+<p>A ADPF, prevista no artigo 102, parágrafo 1º, da Constituição e regulamentada pela Lei 9.882/1999, possui caráter subsidiário — só é cabível quando não houver outro meio eficaz de sanar a lesividade. Tem como objeto evitar ou reparar lesão a preceito fundamental resultante de ato do Poder Público. Sua grande utilidade prática é alcançar situações que as demais ações do controle concentrado não alcançam, como o controle de normas municipais em face da Constituição Federal e de normas pré-constitucionais.</p>
+<p>A coexistência dos dois modelos de controle confere ao sistema brasileiro uma abrangência ampla, mas também gera complexidades. A principal delas é a possibilidade de decisões conflitantes: um tribunal regional pode declarar uma lei constitucional em controle difuso enquanto uma ADI sobre a mesma lei tramita no STF. Por isso, existem mecanismos processuais de articulação entre os dois sistemas, como a cláusula de reserva de plenário (artigo 97 da Constituição), que exige que a declaração de inconstitucionalidade pelos tribunais seja feita pela maioria absoluta de seus membros ou de seu órgão especial.</p>`,
+    questions: [
+      { q: "No controle difuso, qual é a regra quanto aos efeitos da decisão que declara uma lei inconstitucional?", options: ["Efeitos erga omnes automaticamente", "Efeitos apenas entre as partes do processo (inter partes)", "Efeitos vinculantes para todo o Judiciário", "Depende de resolução do Senado para qualquer efeito"], correct: 1 },
+      { q: "Qual é a natureza da atuação do Senado Federal após declaração de inconstitucionalidade pelo STF no controle difuso?", options: ["O Senado é obrigado a suspender a lei", "O Senado tem faculdade, não obrigação, de editar resolução suspendendo a execução", "O Senado deve convocar sessão conjunta com a Câmara", "O Senado apenas dá publicidade à decisão"], correct: 1 },
+      { q: "Quanto aos efeitos temporais da declaração de inconstitucionalidade em ADI:", options: ["Efeitos sempre prospectivos (ex nunc)", "Modulação temporal automática", "Regra é efeito retroativo (ex tunc), STF pode modular por 2/3", "Regra é efeito retroativo (ex tunc), STF pode modular por maioria simples"], correct: 2 },
+      { q: "A ADPF possui caráter subsidiário, o que significa que:", options: ["Só pode ser ajuizada pelo PGR", "Só é cabível para normas federais", "Só é cabível quando não houver outro meio eficaz", "Só pode ser proposta após tentativa de ADI"], correct: 2 },
+      { q: "A cláusula de reserva de plenário (art. 97 CF) exige que:", options: ["Inconstitucionalidade em difuso seja feita exclusivamente pelo STF", "ADI seja julgada com quórum mínimo de 8 ministros", "Declaração pelos tribunais seja pela maioria absoluta dos membros ou órgão especial", "Toda questão constitucional seja submetida ao Senado"], correct: 2 }
+    ]
+  },
+  {
+    week: 2, label: "Semana 2", subject: "Direito Administrativo",
+    topic: "Atos Administrativos", wordCount: 1038,
+    text: `<h3>Elementos, Atributos e Extinção dos Atos Administrativos</h3>
+<p>Os atos administrativos são manifestações unilaterais de vontade da Administração Pública que, agindo nessa qualidade, produzem efeitos jurídicos imediatos, com observância da lei, sob regime jurídico de direito público e sujeitas a controle pelo Poder Judiciário. A compreensão de seus elementos constitutivos, atributos e formas de extinção é indispensável para o estudo do Direito Administrativo.</p>
+<p>A doutrina majoritária identifica cinco elementos (ou requisitos de validade) dos atos administrativos: competência, finalidade, forma, motivo e objeto. Esses elementos foram sistematizados pela Lei 4.717/1965 (Lei da Ação Popular), que os utiliza como parâmetros para verificar a validade dos atos do poder público.</p>
+<p>A competência refere-se ao poder legal atribuído ao agente público para a prática do ato. É sempre definida em lei, irrenunciável, imprescritível e improrrogável. Não se admite que o agente público delegue ou avoque competências fora das hipóteses legais. A prática de ato por agente incompetente configura vício de competência, que pode ser convalidado se não se tratar de competência exclusiva — esta é a regra geral. No entanto, quando a competência é exclusiva, o vício é insanável e o ato é nulo.</p>
+<p>A finalidade é o resultado que a Administração pretende alcançar com a prática do ato. Todo ato administrativo deve atender ao interesse público (finalidade geral) e à finalidade específica prevista em lei para aquele tipo de ato. O desvio de finalidade — quando o agente pratica o ato com objetivo diverso daquele previsto — constitui vício insanável que torna o ato nulo. A Lei da Ação Popular expressamente prevê o desvio de finalidade como causa de nulidade. Um exemplo clássico é a remoção de servidor público utilizada como forma de punição disfarçada.</p>
+<p>A forma é o meio de exteriorização do ato. Em regra, os atos administrativos devem ser escritos, motivados e publicados. Porém, existem exceções: atos urgentes podem ser verbais (uma ordem de um policial no trânsito) e determinados atos podem se exteriorizar por gestos ou sinais convencionais. O vício de forma é, em geral, sanável — pode ser convalidado —, salvo quando a lei expressamente exige determinada forma como condição essencial de validade do ato.</p>
+<p>O motivo é a situação de fato e o fundamento jurídico que autorizam a prática do ato. Não se confunde com motivação, que é a exposição dos motivos no corpo do ato. A teoria dos motivos determinantes, amplamente aceita pela doutrina e jurisprudência, estabelece que, uma vez declarados os motivos que fundamentaram o ato, a Administração fica vinculada a eles. Se os motivos declarados forem falsos ou inexistentes, o ato é nulo, mesmo que se trate de ato discricionário.</p>
+<p>O objeto (ou conteúdo) é o efeito jurídico imediato que o ato produz. Deve ser lícito, possível, determinado ou determinável e moralmente aceito. No ato vinculado, o objeto é previamente definido pela lei. No ato discricionário, o administrador pode, dentro dos limites legais, escolher o objeto mais conveniente e oportuno.</p>
+<p>A presunção de legitimidade significa que os atos administrativos são presumidos conformes ao direito e que os fatos alegados pela Administração são presumidos verdadeiros. Essa presunção é relativa (juris tantum) — admite prova em contrário — e tem como efeito prático a inversão do ônus da prova: cabe ao particular demonstrar eventual vício.</p>
+<p>A autoexecutoriedade é a possibilidade de a Administração executar diretamente seus atos sem prévia autorização judicial. Nem todos os atos possuem esse atributo — ele depende de previsão legal expressa ou de situação de urgência. A cobrança de multa administrativa, por exemplo, não é autoexecutória. Já a demolição de obra irregular em situação de risco iminente pode ser executada diretamente.</p>
+<p>A imperatividade é a possibilidade de a Administração impor obrigações a terceiros independentemente de concordância. Atos enunciativos (como certidões e atestados) e atos negociais (como licenças e autorizações) não possuem imperatividade, pois não impõem obrigações.</p>
+<p>Quanto à extinção, a anulação é a invalidação do ato por vício de legalidade. Pode ser realizada pela própria Administração (autotutela, Súmula 473 do STF) ou pelo Poder Judiciário, e opera efeitos retroativos (ex tunc). A revogação atinge ato válido que se tornou inconveniente ou inoportuno. É ato privativo da Administração — o Judiciário não revoga atos administrativos. Produz efeitos prospectivos (ex nunc). Existem limites: atos vinculados, atos consumados, atos que geraram direitos adquiridos não podem ser revogados.</p>
+<p>A cassação é a extinção do ato porque o beneficiário descumpriu condição necessária para a manutenção do ato e seus efeitos. O exemplo mais utilizado é a cassação de licença de funcionamento de hotel que passa a ser utilizado como casa de prostituição: a licença foi validamente concedida, mas o destinatário deixou de cumprir as condições que a sustentavam.</p>`,
+    questions: [
+      { q: "O vício de competência em ato administrativo:", options: ["É sempre insanável", "Pode ser convalidado, exceto competência exclusiva", "Só pode ser corrigido pelo Judiciário", "Torna o ato anulável apenas se houver prejuízo"], correct: 1 },
+      { q: "Pela teoria dos motivos determinantes:", options: ["A Administração deve motivar todos os atos, sem exceção", "Uma vez declarados os motivos, a Administração fica vinculada a eles; motivos falsos tornam o ato nulo", "Motivo e motivação são conceitos equivalentes", "Atos discricionários não se submetem à teoria"], correct: 1 },
+      { q: "A presunção de legitimidade tem como efeito prático:", options: ["Impossibilidade de o Judiciário anular atos", "Obrigação do particular de obedecer sem questionamento", "Inversão do ônus da prova, cabendo ao particular demonstrar vício", "Dispensa de motivação nos atos vinculados"], correct: 2 },
+      { q: "Sobre a autoexecutoriedade:", options: ["Todos os atos a possuem", "Cobrança de multa é autoexecutória", "Depende de previsão legal ou situação de urgência", "Dispensa contraditório e ampla defesa"], correct: 2 },
+      { q: "Anulação vs. revogação:", options: ["Anulação atinge atos inválidos (ex tunc); revogação atinge atos válidos (ex nunc)", "Ambas podem ser feitas pelo Judiciário", "Anulação é ex nunc; revogação é ex tunc", "Revogação pode recair sobre qualquer ato"], correct: 0 }
+    ]
+  },
+  {
+    week: 3, label: "Semana 3", subject: "Direito Tributário",
+    topic: "Limitações ao Poder de Tributar", wordCount: 1042,
+    text: `<h3>Limitações Constitucionais ao Poder de Tributar</h3>
+<p>O poder de tributar, embora essencial para o financiamento do Estado, não é absoluto. A Constituição de 1988, nos artigos 150 a 152, estabelece limitações que funcionam como garantias fundamentais do contribuinte. Essas limitações se manifestam principalmente sob a forma de princípios constitucionais tributários e imunidades.</p>
+<p>O princípio da legalidade tributária, no artigo 150, I, determina que nenhum tributo pode ser instituído ou aumentado sem lei. A regra exige lei em sentido formal, embora existam exceções: as alíquotas do II, IE, IPI e IOF podem ser alteradas por decreto presidencial, dentro dos limites legais. Essas exceções se justificam pela função extrafiscal desses tributos, que servem como instrumentos de política econômica e precisam de agilidade.</p>
+<p>O princípio da anterioridade desdobra-se em duas vertentes. A anterioridade anual (art. 150, III, "b") proíbe a cobrança no mesmo exercício financeiro da publicação da lei. A anterioridade nonagesimal (alínea "c") proíbe a cobrança antes de 90 dias da publicação. Em regra, ambas devem ser observadas cumulativamente.</p>
+<p>Existem exceções relevantes. O II, IE, IOF e empréstimos compulsórios para calamidade/guerra não se submetem a nenhuma das duas anterioridades. O IPI submete-se à noventena, mas não à anterioridade anual. O Imposto de Renda submete-se à anterioridade anual, mas não à noventena.</p>
+<p>O princípio da irretroatividade (art. 150, III, "a") proíbe cobrar tributos sobre fatos geradores anteriores à vigência da lei. A regra comporta exceções no CTN (art. 106): lei expressamente interpretativa ou que comine penalidade menos severa para ato não definitivamente julgado.</p>
+<p>O princípio da isonomia tributária (art. 150, II) veda tratamento desigual entre contribuintes em situação equivalente. Não é igualdade absoluta, mas material: a progressividade do IR é expressão legítima. O que se proíbe é distinção sem relação com a capacidade econômica.</p>
+<p>O princípio da capacidade contributiva (art. 145, §1º) determina que, sempre que possível, os impostos terão caráter pessoal e serão graduados segundo a capacidade econômica. "Sempre que possível" não torna o princípio opcional — reconhece que nem todos os impostos comportam personalização. Impostos indiretos como ICMS e IPI dificultam a aferição individual, mas a seletividade (alíquotas maiores para supérfluos) é forma de aproximação.</p>
+<p>As imunidades tributárias distinguem-se das isenções por natureza e hierarquia. A imunidade é norma constitucional que impede a incidência. A isenção é norma infraconstitucional que dispensa o pagamento. A imunidade não pode ser revogada por lei ordinária; a isenção pode.</p>
+<p>A imunidade recíproca (art. 150, VI, "a") proíbe que os entes federados cobrem impostos uns dos outros. O STF a estende a autarquias e fundações públicas, e a empresas públicas e SEM prestadoras de serviço público em regime de monopólio. A ratio é preservar o pacto federativo.</p>
+<p>A imunidade dos templos (art. 150, VI, "b") protege entidades religiosas. O STF interpreta amplamente, incluindo imóveis alugados cuja renda reverta às finalidades institucionais. A mesma lógica aplica-se a partidos políticos, sindicatos e entidades de educação/assistência social sem fins lucrativos.</p>
+<p>A imunidade dos livros, jornais, periódicos e papel de impressão (art. 150, VI, "d") protege a liberdade de expressão. O STF incluiu e-books e e-readers (RE 330.817).</p>`,
+    questions: [
+      { q: "As alíquotas do II, IE, IPI e IOF podem ser alteradas por decreto porque:", options: ["São de competência exclusiva da União", "A CF prevê essa exceção pela função extrafiscal desses tributos", "O princípio da legalidade não se aplica a tributos federais", "São indiretos e dispensam lei formal"], correct: 1 },
+      { q: "Sobre as exceções à anterioridade, o Imposto de Renda:", options: ["Não se submete a nenhuma", "Submete-se à noventena, não à anual", "Submete-se à anual, não à noventena", "Submete-se a ambas, sem exceção"], correct: 2 },
+      { q: "A diferença entre imunidade e isenção é que:", options: ["Imunidade é norma constitucional que impede incidência; isenção é infraconstitucional que dispensa pagamento", "Imunidade abrange todos os tributos; isenção só impostos", "Imunidade é temporária; isenção permanente", "Imunidade só beneficia entes públicos"], correct: 0 },
+      { q: "A imunidade recíproca é estendida pelo STF a:", options: ["Todas as empresas públicas e SEM", "Autarquias, fundações e EP/SEM prestadoras de serviço público em monopólio", "Apenas autarquias e fundações", "Toda administração indireta, incluindo concessionárias"], correct: 1 },
+      { q: "\"Sempre que possível\" na capacidade contributiva:", options: ["Torna o princípio facultativo", "Aplica-se só a impostos diretos", "Reconhece que nem todos comportam personalização, sem torná-lo opcional", "Permite ignorar o princípio quando há necessidade arrecadatória"], correct: 2 }
+    ]
+  },
+  {
+    week: 4, label: "Semana 4", subject: "Português / Interpretação",
+    topic: "Interpretação de Texto", wordCount: 1019,
+    text: `<h3>Linguagem Jurídica e Comunicação: Tensões entre Precisão Técnica e Acessibilidade</h3>
+<p>A linguagem do Direito ocupa posição peculiar entre as linguagens técnicas. Diferentemente da terminologia médica ou da engenharia, que se dirigem a profissionais da área, a linguagem jurídica produz efeitos diretos sobre todos os cidadãos. Uma sentença judicial, um contrato de adesão, uma lei tributária — todos afetam pessoas que não dominam o vocabulário especializado. Essa tensão entre precisão técnica e imperativo democrático de acessibilidade constitui problema central da comunicação jurídica contemporânea.</p>
+<p>Os defensores da linguagem tradicional argumentam que a precisão terminológica não é capricho, mas necessidade funcional. A distinção entre "posse" e "propriedade", entre "prescrição" e "decadência", entre "nulidade" e "anulabilidade" não é mera questão semântica — cada termo designa instituto jurídico com regime e consequências distintos. Substituir por equivalentes coloquiais resultaria em ambiguidades e litígios adicionais.</p>
+<p>Essa posição encontra fundamento na teoria dos atos de fala, de J. L. Austin e John Searle. Enunciados jurídicos não são descritivos — são performativos, realizam ações no mundo. Quando o juiz declara "julgo procedente o pedido", constitui nova realidade jurídica. A eficácia depende de formas linguísticas reconhecidas como válidas no sistema.</p>
+<p>Críticos sustentam que a complexidade frequentemente ultrapassa o necessário e se transforma em barreira ao acesso à justiça. A maioria da população não compreende documentos jurídicos básicos. Quando o cidadão não compreende a decisão que afeta seus direitos, o princípio da publicidade torna-se formalidade vazia.</p>
+<p>A complexidade linguística não se distribui uniformemente. Populações com menor escolaridade e renda são desproporcionalmente afetadas, fazendo a linguagem rebuscada funcionar como mecanismo de exclusão social, concentrando poder de compreensão nas mãos de profissionais e classes com maior capital cultural.</p>
+<p>Movimentos de reforma têm ganhado força. Em Portugal, o "Legislar Melhor" estabeleceu diretrizes de clareza. No Brasil, o CNJ lançou em 2023 o Pacto Nacional pela Linguagem Simples. A Lei de Acesso à Informação (Lei 12.527/2011) exige linguagem de fácil compreensão.</p>
+<p>"Linguagem simples" não equivale a "linguagem simplificada". A simplificação excessiva pode comprometer a precisão. O que se propõe é eliminar elementos que não contribuem para a precisão: períodos longos, latinismos desnecessários, inversões sintáticas, redundâncias e arcaísmos. Um texto pode ser tecnicamente preciso e sintaticamente acessível.</p>
+<p>Exemplo: "Destarte, afigura-se inconteste que o demandado, ao perpetrar a conduta em testilha, vulnerou o direito subjetivo do demandante" pode ser reescrito como "Ficou demonstrado que o réu, ao praticar a conduta discutida, violou o direito do autor". Ambas dizem o mesmo; a segunda é compreensível sem sacrificar precisão.</p>
+<p>O debate revela questão mais profunda sobre a função social do Direito. Se o Direito existe para regular a convivência e proteger direitos, sua linguagem deveria ser instrumento de inclusão, não obstáculo. A precisão técnica é irrenunciável onde necessária, mas não pode servir de pretexto para manter linguagem que exclui a maioria.</p>
+<p>Para o profissional, comunicar-se com clareza é competência prática essencial. O advogado que não explica ao cliente sua situação compromete a confiança. O juiz cuja sentença é incompreensível frustra a função jurisdicional. O legislador cujo texto exige intermediários concentra poder. A linguagem é instrumento de poder — e a escolha de como utilizá-la é inevitavelmente uma escolha política.</p>`,
+    questions: [
+      { q: "O principal argumento dos defensores da linguagem jurídica tradicional é:", options: ["A tradição deve ser preservada por razões culturais", "A precisão é necessidade funcional; substituir termos técnicos geraria insegurança", "A linguagem protege os profissionais contra interpretações leigas", "A complexidade é inevitável porque o Direito é complexo"], correct: 1 },
+      { q: "A teoria dos atos de fala é mencionada para explicar que:", options: ["A linguagem jurídica é descritiva e pode ser simplificada", "Enunciados jurídicos são performativos e dependem de formas reconhecidas", "O Direito deveria seguir regras gramaticais mais rígidas", "Austin e Searle defendiam simplificação"], correct: 1 },
+      { q: "A complexidade pode funcionar como mecanismo de exclusão porque:", options: ["Profissionais usam linguagem complexa deliberadamente", "A opacidade afeta desproporcionalmente populações com menor escolaridade e renda", "O sistema é intrinsecamente excludente", "A legislação proíbe linguagem simples"], correct: 1 },
+      { q: "A distinção entre linguagem simples e simplificada é:", options: ["São conceitos equivalentes", "Simples elimina o que não contribui para precisão; simplificação excessiva compromete", "Simples é para leigos; simplificada para profissionais", "Simplificada é do CNJ; simples não tem respaldo"], correct: 1 },
+      { q: "Na conclusão, o autor argumenta que a linguagem jurídica é:", options: ["Problema exclusivamente técnico", "Instrumento de poder, e escolher como usá-la é escolha política", "Questão do Legislativo", "Tema irrelevante para a prática"], correct: 1 }
+    ]
+  }
+];
+
+// ══════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════
+let CUR = null, timerInt = null, timerSec = 0, curPPM = 0;
+let aiRecallScore = null;
+
+const getResults = () => { try { return JSON.parse(localStorage.getItem('ld2_results')||'{}'); } catch { return {}; }};
+const saveResult = (w, d) => { const r = getResults(); r[w] = { ...d, date: new Date().toISOString() }; localStorage.setItem('ld2_results', JSON.stringify(r)); };
+
+// ══════════════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════════════
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.querySelector(`.nav-btn[data-screen="${id}"]`);
+  if (btn) btn.classList.add('active');
+
+  if (id === 'home') { document.getElementById('screen-home').classList.add('active'); renderWeeks(); }
+  else if (id === 'progress') { document.getElementById('screen-progress').classList.add('active'); renderDash(); }
+  else { document.getElementById('screen-'+id).classList.add('active'); }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ══════════════════════════════════════════════════════════════
+// WEEK CARDS
+// ══════════════════════════════════════════════════════════════
+function renderWeeks() {
+  const r = getResults();
+  const done = Object.keys(r).length;
+  document.getElementById('progress-summary').textContent = `${done}/4 completos`;
+
+  document.getElementById('week-grid').innerHTML = WEEKS.map(w => {
+    const res = r[w.week];
+    return `
+      <div class="week-card ${res?'completed':''}" onclick="startWeek(${w.week})">
+        <div class="week-top">
+          <span class="week-number">${w.label}</span>
+          <span class="week-status">${res ? '✓ Completo' : 'Pendente'}</span>
+        </div>
+        <h3>${w.subject}</h3>
+        <div class="week-topic">${w.topic}</div>
+        ${res ? `
+          <div class="week-result-mini">
+            <span><strong>${res.ppm}</strong> PPM</span>
+            <span><strong>${res.quizScore}%</strong> quiz</span>
+            ${res.aiScore != null ? `<span><strong>${res.aiScore}%</strong> IA</span>` : ''}
+          </div>
+        ` : `
+          <div class="week-bottom">
+            <span class="week-words">${w.wordCount} palavras</span>
+            <span class="week-cta">Iniciar →</span>
+          </div>
+        `}
+      </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// READING
+// ══════════════════════════════════════════════════════════════
+function startWeek(n) {
+  CUR = WEEKS.find(w => w.week === n);
+  document.getElementById('r-label').textContent = CUR.label;
+  document.getElementById('r-subject').textContent = CUR.subject + ' — ' + CUR.topic;
+  document.getElementById('reading-text').innerHTML = CUR.text;
+  document.getElementById('pre-read-panel').style.display = '';
+  document.getElementById('reading-content').style.display = 'none';
+  timerSec = 0; clearInterval(timerInt); updTimer();
+  go('reading');
+}
+
+function startReading() {
+  document.getElementById('pre-read-panel').style.display = 'none';
+  document.getElementById('reading-content').style.display = '';
+  timerSec = 0; updTimer();
+  timerInt = setInterval(() => { timerSec++; updTimer(); }, 1000);
+}
+
+function updTimer() {
+  const m = String(Math.floor(timerSec/60)).padStart(2,'0');
+  const s = String(timerSec%60).padStart(2,'0');
+  document.getElementById('timer-display').textContent = `${m}:${s}`;
+}
+
+function finishReading() {
+  clearInterval(timerInt);
+  if (timerSec < 5) { alert('Leia o texto antes de finalizar.'); timerInt = setInterval(()=>{timerSec++;updTimer();},1000); return; }
+  curPPM = Math.round((CUR.wordCount / timerSec) * 60);
+  aiRecallScore = null;
+
+  // Setup assessment screen
+  document.getElementById('assess-ppm').textContent = curPPM;
+  document.getElementById('recall-text').value = '';
+  document.getElementById('char-count').textContent = '0 caracteres';
+  document.getElementById('ai-result').style.display = 'none';
+  document.getElementById('phase-recall').style.display = '';
+  document.getElementById('phase-quiz').style.display = 'none';
+  document.getElementById('tab-recall').className = 'phase-tab active';
+  document.getElementById('tab-quiz').className = 'phase-tab';
+  document.getElementById('btn-submit-recall').disabled = false;
+  document.getElementById('btn-submit-recall').textContent = 'Enviar para análise com IA';
+  go('assessment');
+}
+
+function updateCharCount() {
+  const t = document.getElementById('recall-text').value;
+  document.getElementById('char-count').textContent = `${t.length} caracteres`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// AI RECALL ANALYSIS
+// ══════════════════════════════════════════════════════════════
+async function submitRecall() {
+  const recallText = document.getElementById('recall-text').value.trim();
+  if (recallText.length < 30) { alert('Escreva pelo menos algumas frases sobre o que você lembra do texto.'); return; }
+
+  const btn = document.getElementById('btn-submit-recall');
+  btn.disabled = true;
+  btn.textContent = 'Analisando...';
+
+  const aiDiv = document.getElementById('ai-result');
+  aiDiv.style.display = 'block';
+  aiDiv.innerHTML = `
+    <div class="ai-loading">
+      <div class="ai-loading-dots"><span></span><span></span><span></span></div>
+      <p>A IA está analisando sua evocação...</p>
+    </div>`;
+
+  // Build the original text (strip HTML)
+  const tmp = document.createElement('div');
+  tmp.innerHTML = CUR.text;
+  const originalText = tmp.textContent;
+
+  const prompt = `Você é um avaliador de retenção de leitura para concurseiros brasileiros. Analise a evocação livre de um leitor após ler um texto de doutrina jurídica.
+
+TEXTO ORIGINAL:
+${originalText}
+
+EVOCAÇÃO DO LEITOR (o que ele escreveu de memória após ler):
+${recallText}
+
+Avalie em três dimensões, cada uma de 0 a 100:
+
+1. COMPLETUDE: Qual porcentagem dos conceitos e informações principais do texto o leitor lembrou? Considere os conceitos-chave, classificações, definições, exceções e exemplos.
+
+2. PRECISÃO: Das informações que o leitor mencionou, qual porcentagem está correta? Informações distorcidas ou confusas reduzem a nota.
+
+3. PROFUNDIDADE: O leitor demonstrou compreensão das relações entre os conceitos, ou apenas listou termos isolados?
+
+Responda EXCLUSIVAMENTE neste formato JSON, sem nenhum texto antes ou depois:
+{"completude":XX,"precisao":XX,"profundidade":XX,"pontos_fortes":"texto breve sobre o que o leitor reteve bem","lacunas":"texto breve sobre conceitos importantes que faltaram","nota_geral":"uma frase de avaliação geral"}`;
+
+  try {
+    const response = await fetch("/.netlify/functions/analyze", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt })
+    });
+
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const data = await response.json();
+    const clean = (data.text || '').replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+
+    const avg = Math.round((parsed.completude + parsed.precisao + parsed.profundidade) / 3);
+    aiRecallScore = avg;
+
+    const scoreClass = (v) => v >= 70 ? 'high' : v >= 45 ? 'mid' : 'low';
+
+    aiDiv.innerHTML = `
+      <div class="ai-analysis">
+        <div class="ai-analysis-header">
+          <span class="ai-pulse"></span>
+          Análise da IA — Evocação Livre
+        </div>
+        <div class="ai-analysis-body">
+          <div class="ai-score-row">
+            <div class="ai-score-item">
+              <div class="ai-score-value ${scoreClass(parsed.completude)}">${parsed.completude}%</div>
+              <div class="ai-score-label">Completude</div>
+            </div>
+            <div class="ai-score-item">
+              <div class="ai-score-value ${scoreClass(parsed.precisao)}">${parsed.precisao}%</div>
+              <div class="ai-score-label">Precisão</div>
+            </div>
+            <div class="ai-score-item">
+              <div class="ai-score-value ${scoreClass(parsed.profundidade)}">${parsed.profundidade}%</div>
+              <div class="ai-score-label">Profundidade</div>
+            </div>
+          </div>
+          <div class="ai-feedback">
+<strong>Pontos fortes:</strong> ${parsed.pontos_fortes}
+
+<strong>Lacunas identificadas:</strong> ${parsed.lacunas}
+
+<strong>Avaliação geral:</strong> ${parsed.nota_geral}</div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:1.25rem;">
+        <button class="btn-primary" onclick="goToQuiz()">Continuar para o Quiz Objetivo →</button>
+      </div>`;
+
+  } catch (err) {
+    console.error('AI Error:', err);
+    aiDiv.innerHTML = `
+      <div class="ai-analysis">
+        <div class="ai-analysis-header" style="color:var(--gold);">
+          Análise indisponível
+        </div>
+        <div class="ai-analysis-body">
+          <p class="ai-feedback">Não foi possível conectar à IA neste momento. Isso não impede a continuidade do teste — o quiz objetivo segue normalmente. Sua evocação livre foi registrada para referência pessoal.</p>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:1.25rem;">
+        <button class="btn-primary" onclick="goToQuiz()">Continuar para o Quiz Objetivo →</button>
+      </div>`;
+    aiRecallScore = null;
+  }
+}
+
+function goToQuiz() {
+  document.getElementById('phase-recall').style.display = 'none';
+  document.getElementById('phase-quiz').style.display = '';
+  document.getElementById('tab-recall').className = 'phase-tab done';
+  document.getElementById('tab-quiz').className = 'phase-tab active';
+  renderQuiz();
+  window.scrollTo({top: document.querySelector('.phase-tabs').offsetTop - 80, behavior:'smooth'});
+}
+
+// ══════════════════════════════════════════════════════════════
+// QUIZ
+// ══════════════════════════════════════════════════════════════
+function renderQuiz() {
+  document.getElementById('quiz-container').innerHTML = CUR.questions.map((q,i) => `
+    <div class="question-card">
+      <div class="q-number">Questão ${i+1} de 5</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options-list">
+        ${q.options.map((o,j) => `
+          <label class="opt-label" id="o-${i}-${j}" onclick="pickOpt(${i},${j})">
+            <input type="radio" name="q${i}" value="${j}">
+            <span class="opt-dot"></span>
+            <span>${o}</span>
+          </label>`).join('')}
+      </div>
+    </div>`).join('');
+
+  document.getElementById('quiz-actions').innerHTML = '<button class="btn-primary" onclick="submitQuiz()">Verificar Respostas</button>';
+}
+
+function pickOpt(qi, oi) {
+  document.querySelectorAll(`[id^="o-${qi}-"]`).forEach(e => e.classList.remove('selected'));
+  document.getElementById(`o-${qi}-${oi}`).classList.add('selected');
+}
+
+function submitQuiz() {
+  let correct = 0;
+  const missing = [];
+  CUR.questions.forEach((q,i) => {
+    const sel = document.querySelector(`input[name="q${i}"]:checked`);
+    if (!sel) { missing.push(i+1); return; }
+    const si = parseInt(sel.value);
+    document.getElementById(`o-${i}-${q.correct}`).classList.add('correct');
+    if (si === q.correct) correct++;
+    else document.getElementById(`o-${i}-${si}`).classList.add('wrong');
+  });
+  if (missing.length) { alert(`Responda todas. Faltam: ${missing.join(', ')}`); return; }
+  document.querySelectorAll('.opt-label').forEach(e => e.style.pointerEvents = 'none');
+
+  const quizPct = (correct/5)*100;
+  saveResult(CUR.week, {
+    ppm: curPPM,
+    quizScore: quizPct,
+    quizCorrect: correct,
+    aiScore: aiRecallScore,
+    time: timerSec
+  });
+
+  document.getElementById('quiz-actions').innerHTML = `
+    <p style="color:var(--text-secondary);margin-bottom:1rem;">Acertou <strong style="color:var(--text-primary)">${correct}/5</strong> (${quizPct}%)</p>
+    <button class="btn-primary" onclick="showResults()">Ver Resultado Completo</button>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// RESULTS
+// ══════════════════════════════════════════════════════════════
+function showResults() {
+  const r = getResults()[CUR.week];
+  const m = Math.floor(r.time/60), s = r.time%60;
+
+  let comp = '';
+  if (CUR.week > 1) {
+    const prev = getResults()[CUR.week - 1];
+    if (prev) {
+      const pd = r.ppm - prev.ppm, qd = r.quizScore - prev.quizScore;
+      comp = `
+        <div class="result-detail-card">
+          <h3>Comparação com Semana ${CUR.week-1}</h3>
+          <div class="comparison-row"><span class="label">Velocidade</span><span class="value ${pd>=0?'positive':'negative'}">${pd>=0?'+':''}${pd} PPM</span></div>
+          <div class="comparison-row"><span class="label">Quiz</span><span class="value ${qd>=0?'positive':'negative'}">${qd>=0?'+':''}${qd}%</span></div>
+          ${r.aiScore!=null && prev.aiScore!=null ? `<div class="comparison-row"><span class="label">Evocação IA</span><span class="value ${r.aiScore-prev.aiScore>=0?'positive':'negative'}">${r.aiScore-prev.aiScore>=0?'+':''}${r.aiScore-prev.aiScore}%</span></div>` : ''}
+        </div>`;
+    }
+  }
+
+  document.getElementById('results-content').innerHTML = `
+    <div class="results-hero">
+      <h2>Resultado — ${CUR.label}</h2>
+      <p>${CUR.subject}: ${CUR.topic} · ${m}m${s}s de leitura</p>
+    </div>
+    <div class="results-grid">
+      <div class="result-metric">
+        <div class="result-metric-value blue">${r.ppm}</div>
+        <div class="result-metric-label">Palavras por minuto</div>
+      </div>
+      <div class="result-metric">
+        <div class="result-metric-value gold">${r.quizScore}%</div>
+        <div class="result-metric-label">Quiz objetivo (${r.quizCorrect}/5)</div>
+      </div>
+      <div class="result-metric">
+        <div class="result-metric-value green">${r.aiScore != null ? r.aiScore+'%' : '—'}</div>
+        <div class="result-metric-label">Evocação livre (IA)</div>
+      </div>
+    </div>
+    ${comp}
+    <div class="result-detail-card">
+      <h3>Interpretação</h3>
+      <p>${r.ppm < 150 ? 'Velocidade abaixo da média — há espaço significativo para melhoria.' : r.ppm <= 250 ? 'Velocidade na faixa normal para leitura compreensiva atenta.' : r.ppm <= 350 ? 'Acima da média — ritmo fluente.' : 'Velocidade muito alta — verifique se a compreensão acompanha.'}</p>
+      <p>${r.quizScore >= 80 ? 'Compreensão excelente no quiz objetivo.' : r.quizScore >= 60 ? 'Compreensão boa, com espaço para melhoria. Técnicas de leitura ativa (Cap. 8) podem ajudar.' : 'Atenção: compreensão baixa. Considere reduzir velocidade e aplicar pré-leitura (Cap. 3).'}</p>
+      ${r.aiScore != null ? `<p>${r.aiScore >= 70 ? 'Evocação sólida — boa retenção dos conceitos principais.' : r.aiScore >= 45 ? 'Evocação parcial — alguns conceitos-chave foram lembrados, mas há lacunas.' : 'Evocação fraca — priorize técnicas de recuperação ativa (Cap. 8).'}</p>` : ''}
+    </div>
+    <div class="results-actions">
+      <button class="btn-secondary" onclick="startWeek(${CUR.week})">Refazer teste</button>
+      <button class="btn-primary" onclick="go('home')">Voltar ao início</button>
+      <button class="btn-secondary" onclick="go('progress')">Ver progresso</button>
+    </div>`;
+  go('results');
+}
+
+// ══════════════════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════════════════
+function renderDash() {
+  const r = getResults();
+  const keys = Object.keys(r);
+  if (!keys.length) {
+    document.getElementById('dash-content').innerHTML = `
+      <div class="empty-state">
+        <p style="font-size:1.1rem;margin-bottom:0.5rem;">Nenhum teste realizado.</p>
+        <p>Complete a Semana 1 para ver seu progresso.</p>
+        <button class="btn-primary" onclick="go('home')" style="margin-top:1.5rem;">Ir para os testes</button>
+      </div>`;
+    return;
+  }
+
+  const ppms = keys.map(k => r[k].ppm);
+  const quizs = keys.map(k => r[k].quizScore);
+  const ais = keys.filter(k => r[k].aiScore != null).map(k => r[k].aiScore);
+  const first = r[1], last = r[Math.max(...keys.map(Number))];
+  const ppmDiff = first ? last.ppm - first.ppm : 0;
+
+  let html = `
+    <div class="dash-stats">
+      <div class="dash-stat"><div class="dash-stat-val">${keys.length}/4</div><div class="dash-stat-label">Testes completos</div></div>
+      <div class="dash-stat"><div class="dash-stat-val">${Math.round(ppms.reduce((a,b)=>a+b,0)/ppms.length)}</div><div class="dash-stat-label">PPM médio</div></div>
+      <div class="dash-stat"><div class="dash-stat-val">${Math.round(quizs.reduce((a,b)=>a+b,0)/quizs.length)}%</div><div class="dash-stat-label">Quiz médio</div></div>
+      <div class="dash-stat"><div class="dash-stat-val" style="color:${ppmDiff>=0?'var(--green)':'var(--red)'}">${ppmDiff>=0?'+':''}${ppmDiff}</div><div class="dash-stat-label">Variação PPM</div></div>
+    </div>
+    <div class="chart-card">
+      <h3>Evolução Semanal</h3>
+      <div class="chart-area">
+        ${[1,2,3,4].map(w => {
+          const d = r[w];
+          const maxP = Math.max(350, ...ppms);
+          const pH = d ? Math.max(8, (d.ppm/maxP)*150) : 0;
+          const rH = d ? Math.max(8, (d.quizScore/100)*150) : 0;
+          return `<div class="chart-col">
+            <div class="chart-bars-pair">
+              <div class="chart-bar ${d?'ppm':'empty'}" style="height:${d?pH:4}px">${d?`<div class="chart-bar-val">${d.ppm}</div>`:''}</div>
+              <div class="chart-bar ${d?'ret':'empty'}" style="height:${d?rH:4}px">${d?`<div class="chart-bar-val">${d.quizScore}%</div>`:''}</div>
+            </div>
+            <div class="chart-week-label">Sem ${w}</div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-swatch ppm"></div>Velocidade (PPM)</div>
+        <div class="legend-item"><div class="legend-swatch ret"></div>Quiz (%)</div>
+      </div>
+    </div>
+    <div style="text-align:center;">
+      <button class="btn-secondary" onclick="document.getElementById('reset-modal').classList.add('active')" style="border-color:var(--red);color:var(--red);">Apagar todos os resultados</button>
+    </div>`;
+
+  document.getElementById('dash-content').innerHTML = html;
+}
+
+function closeModal() { document.getElementById('reset-modal').classList.remove('active'); }
+function resetAll() { localStorage.removeItem('ld2_results'); closeModal(); go('home'); }
+
+// INIT
+renderWeeks();
+</script>
+</body>
+</html>
