@@ -1868,8 +1868,18 @@ Responda EXCLUSIVAMENTE neste formato JSON, sem nenhum texto antes ou depois:
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
     const data = await response.json();
-    const clean = (data.text || '').replace(/```json|```/g, '').trim();
-    const parsed = JSON.parse(clean);
+    let raw = (data.text || '').replace(/```json|```/g, '').trim();
+
+// Extrai apenas o bloco JSON (do primeiro { ao último })
+const jsonMatch = raw.match(/\{[\s\S]*\}/);
+if (!jsonMatch) throw new Error('Nenhum JSON encontrado na resposta da IA');
+raw = jsonMatch[0];
+
+// Remove quebras de linha e tabs que estejam DENTRO de valores de string
+// (causa mais comum do "Unterminated string" no JSON.parse)
+raw = raw.replace(/[\r\n\t]+/g, ' ');
+
+const parsed = JSON.parse(raw);
 
     const avg = Math.round((parsed.completude + parsed.precisao + parsed.profundidade) / 3);
     aiRecallScore = avg;
