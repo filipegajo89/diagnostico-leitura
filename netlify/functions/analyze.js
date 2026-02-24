@@ -34,7 +34,7 @@ exports.handler = async function(event) {
           contents: [{ parts: [{ text: prompt }] }],
           generationConfig: {
             temperature: 0.2,
-            maxOutputTokens: 2048,
+            maxOutputTokens: 4096,
             responseMimeType: "application/json"
           }
         })

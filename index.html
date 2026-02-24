@@ -1855,8 +1855,9 @@ Avalie em três dimensões, cada uma de 0 a 100:
 
 3. PROFUNDIDADE: O leitor demonstrou compreensão das relações entre os conceitos, ou apenas listou termos isolados?
 
-Responda EXCLUSIVAMENTE neste formato JSON, sem nenhum texto antes ou depois:
-{"completude":XX,"precisao":XX,"profundidade":XX,"pontos_fortes":"texto breve sobre o que o leitor reteve bem","lacunas":"texto breve sobre conceitos importantes que faltaram","nota_geral":"uma frase de avaliação geral"}`;
+Responda SOMENTE com JSON puro, sem markdown, sem texto fora do JSON.
+Cada campo de texto deve ter NO MÁXIMO 80 caracteres. Seja extremamente conciso.
+{"completude":XX,"precisao":XX,"profundidade":XX,"pontos_fortes":"máx 80 chars","lacunas":"máx 80 chars","nota_geral":"máx 80 chars"}`;
 
   try {
     const response = await fetch("/.netlify/functions/analyze", {
@@ -1871,16 +1872,31 @@ Responda EXCLUSIVAMENTE neste formato JSON, sem nenhum texto antes ou depois:
     console.log('Resposta bruta da IA:', JSON.stringify(data));
     let raw = (data.text || '').replace(/```json|```/g, '').trim();
 
-// Extrai apenas o bloco JSON (do primeiro { ao último })
-const jsonMatch = raw.match(/\{[\s\S]*\}/);
-if (!jsonMatch) throw new Error('Nenhum JSON encontrado na resposta da IA');
-raw = jsonMatch[0];
+    // Tenta parse completo primeiro
+    let parsed = null;
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      try {
+        parsed = JSON.parse(jsonMatch[0].replace(/[\r\n\t]+/g, ' '));
+      } catch(e) { /* tenta fallback */ }
+    }
 
-// Remove quebras de linha e tabs que estejam DENTRO de valores de string
-// (causa mais comum do "Unterminated string" no JSON.parse)
-raw = raw.replace(/[\r\n\t]+/g, ' ');
-
-const parsed = JSON.parse(raw);
+    // Fallback: extrai valores por regex se JSON estiver truncado
+    if (!parsed) {
+      const c = raw.match(/"completude"\s*:\s*(\d+)/);
+      const p = raw.match(/"precisao"\s*:\s*(\d+)/);
+      const d = raw.match(/"profundidade"\s*:\s*(\d+)/);
+      if (!c || !p || !d) throw new Error('Nenhum JSON encontrado na resposta da IA');
+      parsed = {
+        completude: parseInt(c[1]),
+        precisao: parseInt(p[1]),
+        profundidade: parseInt(d[1]),
+        pontos_fortes: raw.match(/"pontos_fortes"\s*:\s*"([^"]*)/)?.[1] || '—',
+        lacunas: raw.match(/"lacunas"\s*:\s*"([^"]*)/)?.[1] || '—',
+        nota_geral: raw.match(/"nota_geral"\s*:\s*"([^"]*)/)?.[1] || '—'
+      };
+      console.warn('JSON truncado — valores extraídos por regex:', parsed);
+    }
 
     const avg = Math.round((parsed.completude + parsed.precisao + parsed.profundidade) / 3);
     aiRecallScore = avg;
