@@ -1410,6 +1410,131 @@ body::before {
   .features-strip { grid-template-columns: 1fr; }
   .phase-tabs { flex-direction: column; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   TECHNIQUE PRESCRIPTION CARD
+   ═══════════════════════════════════════════════════════════ */
+.technique-card {
+  background: linear-gradient(135deg, rgba(59,130,246,0.07), rgba(245,158,11,0.04));
+  border: 1px solid rgba(59,130,246,0.22);
+  border-radius: var(--radius);
+  padding: 1.75rem 1.75rem 1.75rem 2rem;
+  margin-bottom: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+.technique-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px; height: 100%;
+  background: linear-gradient(to bottom, var(--accent), var(--gold));
+  border-radius: 4px 0 0 4px;
+}
+.technique-eyebrow {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-bright);
+  margin-bottom: 0.5rem;
+}
+.technique-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+.technique-desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+.technique-steps {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+.technique-steps li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+.step-num {
+  background: var(--accent-glow);
+  color: var(--accent-bright);
+  border-radius: 50%;
+  width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.technique-note {
+  background: rgba(245,158,11,0.07);
+  border: 1px solid rgba(245,158,11,0.2);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin: 0.75rem 0;
+  font-size: 0.83rem;
+  color: var(--gold);
+  line-height: 1.5;
+}
+.technique-note.blue {
+  background: rgba(59,130,246,0.07);
+  border-color: rgba(59,130,246,0.2);
+  color: var(--accent-bright);
+}
+.technique-ref {
+  font-size: 0.73rem;
+  color: var(--text-dim);
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+}
+
+/* Week card locked state */
+.week-card.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.week-card.locked:hover { transform: none; box-shadow: none; border-color: var(--border); }
+.week-card.locked::after { display: none; }
+.week-lock-msg {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+.week-done-date {
+  font-size: 0.73rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  margin-top: 0.35rem;
+}
+
+/* Storage persistence badge */
+.storage-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  padding: 0.35rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 50px;
+}
+.storage-dot {
+  width: 6px; height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--green);
+}
 </style>
 </head>
 <body>
@@ -1476,6 +1601,9 @@ body::before {
         <span class="section-meta" id="progress-summary"></span>
       </div>
       <div class="week-grid" id="week-grid"></div>
+      <div style="text-align:center;margin-top:1.25rem;">
+        <span class="storage-badge"><span class="storage-dot"></span>Resultados salvos automaticamente no navegador — persistem entre sessões</span>
+      </div>
     </div>
   </div>
 </div>
@@ -1739,11 +1867,20 @@ function renderWeeks() {
 
   document.getElementById('week-grid').innerHTML = WEEKS.map(w => {
     const res = r[w.week];
+    const prevDone = w.week === 1 || !!r[w.week - 1];
+    const locked = !res && !prevDone;
+
+    let dateStr = '';
+    if (res && res.date) {
+      const d = new Date(res.date);
+      dateStr = `<div class="week-done-date">✓ Concluído em ${d.toLocaleDateString('pt-BR')}</div>`;
+    }
+
     return `
-      <div class="week-card ${res?'completed':''}" onclick="startWeek(${w.week})">
+      <div class="week-card ${res ? 'completed' : locked ? 'locked' : ''}" onclick="${locked ? '' : `startWeek(${w.week})`}">
         <div class="week-top">
           <span class="week-number">${w.label}</span>
-          <span class="week-status">${res ? '✓ Completo' : 'Pendente'}</span>
+          <span class="week-status">${res ? '✓ Completo' : locked ? '🔒 Bloqueado' : 'Pendente'}</span>
         </div>
         <h3>${w.subject}</h3>
         <div class="week-topic">${w.topic}</div>
@@ -1752,6 +1889,11 @@ function renderWeeks() {
             <span><strong>${res.ppm}</strong> PPM</span>
             <span><strong>${res.quizScore}%</strong> quiz</span>
             ${res.aiScore != null ? `<span><strong>${res.aiScore}%</strong> IA</span>` : ''}
+          </div>
+          ${dateStr}
+        ` : locked ? `
+          <div class="week-bottom">
+            <span class="week-lock-msg">🔒 Complete a Semana ${w.week - 1} primeiro</span>
           </div>
         ` : `
           <div class="week-bottom">
@@ -2018,6 +2160,99 @@ function submitQuiz() {
 }
 
 // ══════════════════════════════════════════════════════════════
+// TECHNIQUE PRESCRIPTION — baseada no Capítulo 4 do ebook
+// ══════════════════════════════════════════════════════════════
+function getTechniqueCard(weekNum, res) {
+  const TECHNIQUES = {
+    // Semana 1 concluída → prescreve técnicas da Semana 2 do ebook
+    1: {
+      label: 'Semana 2 do Programa — O que praticar agora',
+      title: 'Leitura Ativa + Redução de Regressões',
+      sections: 'Seções 3.4 e 3.6',
+      desc: 'A recuperação ativa é, segundo Dunlosky et al. (2013), a técnica de estudo com maior impacto comprovado. Implemente esta semana: a cada bloco de 3-4 páginas, feche o material e escreva de memória o que reteve.',
+      steps: [
+        'A cada 3-4 páginas lidas, feche o PDF e escreva de memória os pontos principais',
+        'Use o cursor como guia visual — ele também reduz regressões involuntárias',
+        'Ao terminar cada seção, elabore 2-3 questões no estilo da sua banca',
+        'Confira e corrija — o esforço de recuperação é o que consolida o aprendizado'
+      ],
+      ref: 'Dunlosky et al. (2013) · Rowland (2014): efeito g=0.50 na retenção a longo prazo'
+    },
+    // Semana 2 concluída → prescreve técnicas da Semana 3 do ebook
+    2: {
+      label: 'Semana 3 do Programa — O que praticar agora',
+      title: 'Gestão da Subvocalização + Skimming para Revisão',
+      sections: 'Seções 3.2 e 3.5',
+      desc: 'Aprenda a mudar de marcha conforme o material. Em revisão: reduza a voz interior e aplique skimming. Em conteúdo novo: mantenha a subvocalização plena. A técnica do murmúrio acelera sem sacrificar compreensão.',
+      steps: [
+        'Revisão de material já estudado: leia apenas a 1ª frase de cada parágrafo (skimming)',
+        'Técnica do murmúrio: pronuncie mentalmente só as palavras-chave, não cada sílaba',
+        'Em legislação seca e conteúdo novo: mantenha a subvocalização completa',
+        'Cronometre: seu skimming deve ser pelo menos 2× mais rápido que a leitura normal'
+      ],
+      ref: 'Slowiaczek & Clifton (1995): suprimir subvocalização reduz compreensão em 10-12%'
+    },
+    // Semana 3 concluída → prescreve técnicas da Semana 4 do ebook
+    3: {
+      label: 'Semana 4 do Programa — O que praticar agora',
+      title: 'Chunking + Integração de Todas as Técnicas',
+      sections: 'Seção 3.7 + Semana 4 do Programa',
+      desc: 'A semana de integração. Aplique todas as técnicas de forma fluida. O foco especial é o chunking em legislação: agrupar incisos por tema antes de memorizar multiplica a retenção sem esforço adicional.',
+      steps: [
+        'Organize incisos por tema antes de ler artigo por artigo (ex: art. 37 → LIMPE)',
+        'Aplique o protocolo completo: survey → leitura + guia visual → recuperação ativa',
+        'Alterne conscientemente: subvocalização plena (novo), reduzida (revisão)',
+        'Ao final de cada sessão, faça skimming rápido de tudo que estudou no dia'
+      ],
+      ref: 'Cowan (2001): chunking expande a capacidade efetiva da memória de trabalho'
+    },
+    // Semana 4 concluída → programa encerrado
+    4: {
+      label: '🏁 Programa de 4 Semanas Concluído',
+      title: 'Modo de Manutenção — Técnicas como Hábito',
+      sections: 'Conclusão do ebook',
+      desc: 'Você completou o programa. Os maiores ganhos agora virão da consistência: aplicar as técnicas automaticamente, sem pensar nelas. Continue medindo periodicamente para detectar estagnação.',
+      steps: [
+        'Mantenha a recuperação ativa como protocolo permanente em cada sessão de estudo',
+        'Use skimming sistematicamente para revisão pré-simulado e pré-prova',
+        'Refaça os 4 testes em 30 dias e compare com seus resultados atuais',
+        'Se notar queda, volte especificamente à técnica mais fraca e pratique por 1 semana'
+      ],
+      ref: 'Klimovich et al. (2023): ganhos de 25-50 PPM são realistas com prática consistente'
+    }
+  };
+
+  const t = TECHNIQUES[weekNum];
+  if (!t) return '';
+
+  // Nota personalizada baseada nos scores do teste
+  let personalNote = '';
+  if (res) {
+    if (res.quizScore < 60) {
+      personalNote = `<div class="technique-note">⚠️ Seu quiz ficou em <strong>${res.quizScore}%</strong> — priorize a <strong>recuperação ativa</strong> nesta semana: feche o material e teste-se antes de seguir.</div>`;
+    } else if (res.aiScore != null && res.aiScore < 45) {
+      personalNote = `<div class="technique-note">⚠️ Evocação livre em <strong>${res.aiScore}%</strong> — o foco desta semana deve ser fechar o material a cada bloco e escrever de memória antes de prosseguir.</div>`;
+    } else if (res.ppm < 175) {
+      personalNote = `<div class="technique-note blue">💡 Velocidade em <strong>${res.ppm} PPM</strong> — use o guia visual (cursor abaixo da linha) em todas as leituras. Comece as fixações na 2ª palavra de cada linha.</div>`;
+    } else if (res.quizScore >= 80 && (res.aiScore == null || res.aiScore >= 70)) {
+      personalNote = `<div class="technique-note blue">✅ Ótimos números — você está no caminho certo. Aplique a técnica desta semana para consolidar os ganhos.</div>`;
+    }
+  }
+
+  return `
+    <div class="technique-card">
+      <div class="technique-eyebrow">📘 ${t.label}</div>
+      <div class="technique-title">${t.title}</div>
+      <div class="technique-desc">${t.desc}</div>
+      ${personalNote}
+      <ul class="technique-steps">
+        ${t.steps.map((s, i) => `<li><span class="step-num">${i + 1}</span>${s}</li>`).join('')}
+      </ul>
+      <div class="technique-ref">📎 ${t.ref} · ${t.sections} do ebook</div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════════════
 // RESULTS
 // ══════════════════════════════════════════════════════════════
 function showResults() {
@@ -2065,6 +2300,7 @@ function showResults() {
       <p>${r.quizScore >= 80 ? 'Compreensão excelente no quiz objetivo.' : r.quizScore >= 60 ? 'Compreensão boa, com espaço para melhoria. Técnicas de leitura ativa (Cap. 8) podem ajudar.' : 'Atenção: compreensão baixa. Considere reduzir velocidade e aplicar pré-leitura (Cap. 3).'}</p>
       ${r.aiScore != null ? `<p>${r.aiScore >= 70 ? 'Evocação sólida — boa retenção dos conceitos principais.' : r.aiScore >= 45 ? 'Evocação parcial — alguns conceitos-chave foram lembrados, mas há lacunas.' : 'Evocação fraca — priorize técnicas de recuperação ativa (Cap. 8).'}</p>` : ''}
     </div>
+    ${getTechniqueCard(CUR.week, r)}
     <div class="results-actions">
       <button class="btn-secondary" onclick="startWeek(${CUR.week})">Refazer teste</button>
       <button class="btn-primary" onclick="go('home')">Voltar ao início</button>
