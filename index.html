@@ -1868,6 +1868,7 @@ Responda EXCLUSIVAMENTE neste formato JSON, sem nenhum texto antes ou depois:
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
     const data = await response.json();
+    console.log('Resposta bruta da IA:', JSON.stringify(data));
     let raw = (data.text || '').replace(/```json|```/g, '').trim();
 
 // Extrai apenas o bloco JSON (do primeiro { ao último })
